@@ -154,4 +154,18 @@ class BlogArticle
 
         return $this;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+            'content' => $this->getContent(),
+            'author_id' => $this->getAuthor()->getUsername(),
+            'cover_picture_ref' => $this->getCoverPictureRef(),
+            'creation_date' => $this->getCreationDate()->format('Y-m-d H:i:s'),
+            'publication_date' => $this->getPublicationDate()->format('Y-m-d H:i:s'),
+            'status' => $this->getStatus(),
+        ];
+    }
 }
