@@ -93,6 +93,59 @@ class BlogArticleController extends AbstractController
     }
     // ===================================
 
+    // On modifie un article par son identifiant 
+    #[Route("/blog-articles/{id}", name: 'update', methods: ['PATCH'])]
+    public function update(Request $request, BlogArticle $blogArticle, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = json_decode($request->request->get('data'), true);
+
+        if (empty($data['title'])) {
+            return new JsonResponse(['error' => 'Title is required.'], 400);
+        }
+        if (empty($data['content'])) {
+            return new JsonResponse(['error' => 'Content is required.'], 400);
+        }
+        if (empty($data['author_id'])) {
+            return new JsonResponse(['error' => 'Author ID is required.'], 400);
+        }
+
+        if (!empty($data['title'])) {
+            $blogArticle->setTitle($data['title']);
+        }
+        if (!empty($data['content'])) {
+            $blogArticle->setContent($data['content']);
+        }
+        if (!empty($data['keywords'])) {
+            $blogArticle->setKeywords($data['keywords']);
+        }
+
+        /** @var UploadedFile $file */
+        $file = $request->files->get('cover_picture_ref');
+        if ($file) {
+            $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+            $newFilename = $blogArticle->getSlug() . '-' . uniqid() . '.' . $file->guessExtension();
+
+            $oldFilePath = $this->getParameter('kernel.project_dir') . '/public/uploaded_pictures/' . $blogArticle->getCoverPictureRef();
+            if (file_exists($oldFilePath)) {
+                unlink($oldFilePath);
+            }
+
+            $file->move(
+                $this->getParameter('kernel.project_dir') . '/public/uploaded_pictures',
+                $newFilename
+            );
+
+            $blogArticle->setCoverPictureRef($newFilename);
+        }
+
+        $currentDateTime = new \DateTime();
+        $blogArticle->setPublicationDate($currentDateTime);
+
+        $entityManager->flush();
+
+        return new JsonResponse($blogArticle->toArray(), 200, ['Content-Type' => 'application/json']);
+    }
+
     // On récupére un article spécifique par son identifiant
     #[Route("/blog-articles/{id}", name: 'show', methods: 'GET')]
     public function show(BlogArticle $blogArticle, BlogArticleRepository $blogArticleRepository, int $id, SerializerInterface $serializer): JsonResponse
