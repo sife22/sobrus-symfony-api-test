@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
 
 class BlogArticleController extends AbstractController
 {
@@ -29,7 +31,7 @@ class BlogArticleController extends AbstractController
 
     // On crée un nouvel article 
     #[Route('/blog-articles', name: 'store', methods: ['POST'])]
-    public function store(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function store(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
     {
         $data = json_decode($request->request->get('data'), true);
     
@@ -59,6 +61,16 @@ class BlogArticleController extends AbstractController
         $blogArticle->setAuthor($author);
         $blogArticle->setTitle($data['title']);
         $blogArticle->setContent($data['content']);
+
+        $errors = $validator->validate($blogArticle);
+    
+        if (count($errors) > 0) {
+            $errorMessages = [];
+            foreach ($errors as $error) {
+                $errorMessages[] = $error->getMessage();
+            }
+            return new JsonResponse(['errors' => $errorMessages], 400);
+        }
     
         if (!empty($data['keywords'])) {
             $blogArticle->setKeywords($data['keywords']);
@@ -95,7 +107,7 @@ class BlogArticleController extends AbstractController
 
     // On modifie un article par son identifiant 
     #[Route("/blog-articles/{id}", name: 'update', methods: ['PATCH'])]
-    public function update(Request $request, BlogArticle $blogArticle, EntityManagerInterface $entityManager): JsonResponse
+    public function update(Request $request, BlogArticle $blogArticle, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
     {
         $data = json_decode($request->request->get('data'), true);
 
@@ -109,15 +121,19 @@ class BlogArticleController extends AbstractController
             return new JsonResponse(['error' => 'Author ID is required.'], 400);
         }
 
-        if (!empty($data['title'])) {
-            $blogArticle->setTitle($data['title']);
+        $errors = $validator->validate($blogArticle);
+    
+        if (count($errors) > 0) {
+            $errorMessages = [];
+            foreach ($errors as $error) {
+                $errorMessages[] = $error->getMessage();
+            }
+            return new JsonResponse(['errors' => $errorMessages], 400);
         }
-        if (!empty($data['content'])) {
-            $blogArticle->setContent($data['content']);
-        }
-        if (!empty($data['keywords'])) {
-            $blogArticle->setKeywords($data['keywords']);
-        }
+
+        $blogArticle->setTitle($data['title']);
+        $blogArticle->setContent($data['content']);
+        $blogArticle->setKeywords($data['keywords']);
 
         /** @var UploadedFile $file */
         $file = $request->files->get('cover_picture_ref');

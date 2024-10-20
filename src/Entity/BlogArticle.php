@@ -6,6 +6,7 @@ use App\Repository\BlogArticleRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use App\Enum\StatusEnum;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 #[ORM\Entity(repositoryClass: BlogArticleRepository::class)]
@@ -17,12 +18,15 @@ class BlogArticle
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank(message: "The title is required.")]
+    #[Assert\Length(max: 255, maxMessage: "The title cannot be longer than 255 characters.")]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message: "The content is required.")]
     private ?string $content = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -32,6 +36,7 @@ class BlogArticle
     private ?\DateTimeInterface $publicationDate = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Type("array", message: "The keywords must be an array.")]
     private ?array $keywords = null;
 
     #[ORM\Column(length: 255)]
