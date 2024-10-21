@@ -59,16 +59,19 @@ class BlogArticleController extends AbstractController
             return new JsonResponse(['error' => 'Picture is required.'], 400);
         }
 
-    
         $blogArticle = new BlogArticle();
         $blogArticle->setAuthor($author);
         $blogArticle->setTitle($data['title']);
 
+        // Algorithmic Challenge
         $bannedWords = ['racism', 'hate', 'war'];
         $blogArticleUtils = new BlogArticleUtils();
         $filtredBlogArticleContent = $blogArticleUtils->getTopRepeatedWords($data['content'], $bannedWords);
-        $blogArticle->setContent($data['content']);
         $blogArticle->setKeywords($filtredBlogArticleContent);
+        // =====================
+
+        $blogArticle->setContent($data['content']);
+
 
         $errors = $validator->validate($blogArticle);
     
