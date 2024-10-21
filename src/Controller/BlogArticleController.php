@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class BlogArticleController extends AbstractController
 {
     // On récupére tous les articles 
-    #[Route('/blog-articles', name: 'index', methods: 'GET')]
+    #[Route('/blog_articles', name: 'index', methods: 'GET')]
     public function index(BlogArticleRepository $repository, SerializerInterface $serializer): JsonResponse
     {
         $articles = $serializer->serialize($repository->findAll(), 'json');
@@ -30,7 +30,7 @@ class BlogArticleController extends AbstractController
     // =============================
 
     // On crée un nouvel article 
-    #[Route('/blog-articles', name: 'store', methods: ['POST'])]
+    #[Route('/blog_articles', name: 'store', methods: ['POST'])]
     public function store(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
     {
         $data = json_decode($request->request->get('data'), true);
@@ -106,7 +106,7 @@ class BlogArticleController extends AbstractController
     // ===================================
 
     // On modifie un article par son identifiant 
-    #[Route("/blog-articles/{id}", name: 'update', methods: ['PATCH'])]
+    #[Route("/blog_articles/{id}", name: 'update', methods: ['PATCH'])]
     public function update(Request $request, BlogArticle $blogArticle, EntityManagerInterface $entityManager, ValidatorInterface $validator): JsonResponse
     {
         $data = json_decode($request->request->get('data'), true);
@@ -163,7 +163,7 @@ class BlogArticleController extends AbstractController
     }
 
     // On récupére un article spécifique par son identifiant
-    #[Route("/blog-articles/{id}", name: 'show', methods: 'GET')]
+    #[Route("/blog_articles/{id}", name: 'show', methods: 'GET')]
     public function show(BlogArticle $blogArticle, BlogArticleRepository $blogArticleRepository, int $id, SerializerInterface $serializer): JsonResponse
     {
         $article = $blogArticleRepository->find($id);
@@ -179,7 +179,7 @@ class BlogArticleController extends AbstractController
     // =======================================================
 
     // On supprime un article par son identifiant
-    #[Route("/blog-articles/{id}", name: 'delete', methods: 'DELETE')]
+    #[Route("/blog_articles/{id}", name: 'delete', methods: 'DELETE')]
     public function delete(BlogArticle $blogArticle, EntityManagerInterface $entityManager, int $id): JsonResponse
     {
     $coverPictureRef = $blogArticle->getCoverPictureRef();
