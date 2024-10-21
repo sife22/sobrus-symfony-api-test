@@ -4,6 +4,11 @@ controllers:
         namespace: App\Controller
     prefix: /api
     type: attribute
-    
+
 api_login_check:
     path: /api/login_check
+
+# except register route from api prefix
+register:
+    path: /register
+    controller: App\Controller\UserController::register

@@ -19,6 +19,14 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+    App\Service\:
+        resource: '../src/Service'
+        tags: ['controller.service_arguments']
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Service\EventListener\JWTCreatedListener:
+        # resource: '../src/Service/Eve,tListner'
+        tags:
+            - { name: 'kernel.event_listener', event: 'lexik_jwt_authentication.on_jwt_created', method: 'onJWTCreated' }
