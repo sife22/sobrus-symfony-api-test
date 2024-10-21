@@ -3,8 +3,11 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -27,6 +30,14 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $password = null;
+
+
+    // /**
+    //  * @var Collection<int, BlogArticle>
+    //  */
+    // #[ORM\OneToMany(targetEntity: BlogArticle::class, mappedBy: 'author')]
+    // private Collection $blogArticles;
+    
 
      /**
      * The public representation of the user (e.g. a username, an email address, etc.)
