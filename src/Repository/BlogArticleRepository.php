@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\DTO\BlogArticleDTO;
 use App\Entity\BlogArticle;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -14,6 +15,18 @@ class BlogArticleRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, BlogArticle::class);
+    }
+
+    public function findAllDTO(): array
+    {
+        $blogs = $this->findAll();
+        $blogDTOs = [];
+
+        foreach ($blogs as $blog) {
+            $blogDTOs[] = new BlogArticleDTO($blog->getId(), $blog->getTitle(), $blog->getSlug(), $blog->getContent(), $blog->getAuthor());
+        }
+
+        return $blogDTOs;
     }
 
     //    /**
