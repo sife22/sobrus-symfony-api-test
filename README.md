@@ -51,3 +51,52 @@ The `BlogArticleController` manages blog articles, providing functionality for c
 - Handles file system errors when dealing with uploaded files.
 
 This controller provides a comprehensive API for managing blog articles in a Symfony application.
+
+# UserController Summary with JWT Implementation
+
+## Overview
+
+The `UserController` manages user registration and authentication using JWT (JSON Web Tokens) for secure API access. It includes methods for registering new users and logging in existing users to retrieve a JWT.
+
+## Routes
+
+### 1. User Registration
+- **Method**: POST
+- **Path**: `/register`
+- **Description**: Registers a new user.
+- **Request Parameters**:
+  - `username` (required)
+  - `email` (required)
+  - `password` (required)
+- **Response**: 
+  - Success: `{"message": "User registered successfully!"}` (HTTP 201)
+
+### 2. User Login
+- **Method**: POST
+- **Path**: `/login`
+- **Description**: Authenticates a user and returns a JWT.
+- **Request Parameters**:
+  - `username` (required)
+  - `password` (required)
+- **Response**:
+  - Success: `{"token": "JWT_TOKEN"}` (HTTP 200)
+  - Error: `{"error": "Invalid credentials"}` (HTTP 401)
+
+## Key Features
+
+- **User Registration**: 
+  - Hashes passwords using `UserPasswordHasherInterface`.
+  - Stores user data in the database using Doctrine's EntityManager.
+
+- **JWT Authentication**:
+  - Utilizes `lexik/jwt-authentication-bundle` for generating and managing JWTs.
+  - Securely authenticates users and issues tokens for access to protected routes.
+
+## Security Configuration
+
+- JWT is configured in `config/packages/security.yaml`.
+- Protects routes under the `/api` path, allowing anonymous access to registration and login.
+
+## Error Handling
+
+- Returns appropriate JSON error messages for invalid credentials during login.
